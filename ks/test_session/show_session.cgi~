@@ -1,0 +1,19 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'cgi'
+require 'cgi/session'
+
+cgi = CGI.new
+session = CGI::Session.new(cgi)
+
+out = <<OUT
+<html>
+<body>
+session["foo"] = #{session["foo"]}
+<a href="./index.html">index</a>
+</body>
+</html>
+OUT
+
+cgi.out{ out }

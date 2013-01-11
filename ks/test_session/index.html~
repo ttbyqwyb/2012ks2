@@ -1,0 +1,12 @@
+Content-Type: text/html
+
+<html>
+  <head>
+    <title>index</title>
+  </head>
+  <body>
+    <p><a href="./foo.cgi">foo</a></p>
+  </body>
+</html>
+     
+      

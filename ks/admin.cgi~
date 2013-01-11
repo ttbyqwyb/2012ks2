@@ -1,0 +1,24 @@
+#!/usr/bin/ruby
+
+require "rubygems"
+require "cgi"
+require "pg"
+require "settings"
+require "table"
+
+pg = get_pgconn
+res = pg.exec("select * from users;")
+key = ["userid", "username", "password", "score"]
+ary = hashary_to_ary( key, res )
+table = ary_to_table( ary )
+
+html = <<HTML
+<html>
+  <head>
+    <title>admin</title>
+  </head>
+  <body>
+    user list<br>
+    #{table}
+  </body>
+</html>
