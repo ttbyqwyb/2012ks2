@@ -1,0 +1,2 @@
+sudo userdel user_name
+sudo rm -rf for_daemon/test_dir
