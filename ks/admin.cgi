@@ -8,7 +8,7 @@ require "settings"
 require "table"
 
 cgi = CGI.new
-pg = get_pgconn
+pg = Settings.get_pgconn
 res = pg.exec("select * from users;")
 ha = []
 res.each do |h|

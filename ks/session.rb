@@ -37,12 +37,12 @@ HEAD
     return user
   end
   def login( username, password )
-    pg = get_pgconn
+    pg = Settings.get_pgconn
     return 0 if @logined
     @error_msg = ""
     pg_username = pg.escape(username)
     user_search = pg.exec("select * from #{Table_name} where username = '#{pg_username}';")
-    if user_search.cmd_tuples == 0 
+    if user_search.cmd_tuples == 0 and Settings::False_in_my_PC
       @error_msg = "Non-existing user."
     elsif user_search[0]['password'] == password
       @logined = true

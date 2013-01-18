@@ -16,7 +16,7 @@ begin
   cgi = CGI.new
   session = UserSession.new(cgi) #CGI::Session.new(cgi)
   if ! session.logined? #session['userid'].nil?
-    pg = get_pgconn
+    pg = Settings.get_pgconn
     username = cgi['username']
     password = cgi['password']
     login_success = false

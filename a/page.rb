@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'cgi'
 require 'pg'
+require 'member'
 
 class LoginPage
   def initialize(args)
@@ -33,7 +34,7 @@ class HomePage
     @args = args
   end
   def page()
-    username = @args['username']
+    member = @args['member']
     ret = ""
     ret += <<HTML
 <html>
@@ -41,7 +42,13 @@ class HomePage
   <title>Home</title>
 </head>
 <body>
-  <p>You are #{username}. </p>
+  <p>You are #{member.username}, userid:#{member.userid}. </p>
+  <p>
+  <form method="post" action="upload.cgi" enctype="multipart/form-data">
+    <input type="file" name="file"/>
+    <input type="submit" value="submit filee"/>
+  </form>
+  </p>
 </body>
 </html>
 HTML

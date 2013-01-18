@@ -10,9 +10,10 @@ cgi = CGI.new
 session = UserSession.new(cgi)
 if session.login_check
   user = session.get_user
-  probnum = cgi["probnum"].to_i
+  prob_num = cgi["prob_num"].to_i
   sourcecode = cgi["sourcecode"]
-  result = user.answer( {"probnum"=>probnum, "sourcecode"=>sourcecode} )
+  language = cgi["language"]
+  result = user.answer( {"prob_num"=>prob_num, "sourcecode"=>sourcecode, "language"=>language} )
   html = <<HTML
 <html>
   <body>

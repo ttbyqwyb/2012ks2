@@ -1,17 +1,19 @@
 #!/usr/bin/ruby
+# -*- coding: undecided -*-
 
 require 'rubygems'
 require 'cgi'
 require 'cgi/session'
 require 'pg'
-require 'page/page'
+require 'page'
+require 'member'
 
 table_name = 'members';
 
 begin
   cgi = CGI.new
   session = CGI::Session.new(cgi)
-  if session['username'].nil?
+  if session['userid'].nil?
     pg = PG::Connection.connect('localhost', 5432, '', '', 'test', 'postgres', '')
     username = cgi['username']
     password = cgi['password']
@@ -35,7 +37,7 @@ begin
       error_msg = "Invalid username."
     end
     if login_success
-      session['username'] = username
+      session['userid'] = user_search[0]['userid'].to_s
       print cgi.header({'status' => 'REDIRECT', 'Location' => './home.cgi'})
     else
       cgi.out{ LoginPage.new({'error_msg' => error_msg}).page }
@@ -44,7 +46,7 @@ begin
     print cgi.header({'status' => 'REDIRECT', 'Location' => './home.cgi'})
   end
 rescue PG::Error => ex
-  cgi.out{ LoginPage.new({'error_msg' => "PG::Error rescued."}).page }
+  cgi.out{ LoginPage.new({'error_msg' => "PG::Error rescued.#{ex.to_s}"}).page }
 ensure
   pg.close if pg
 end
