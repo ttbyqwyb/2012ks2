@@ -10,6 +10,9 @@ class Execution
   end
   
   def run()
+    # Return value
+    ret = {}
+    
     # Arguments for the problem
     time_limit = @args['time_limit']
     input_dir = @args['input_dir']
@@ -33,9 +36,10 @@ class Execution
     # Compilation
     case language
     when "C++"
-      res = !system("g++ -O2 #{source_file} -o #{test_dir}/a")
+      res = !system("g++ -O2 #{source_file} -o #{test_dir}/a >& /dev/null")
       if res
-        return error("Compile Error")
+        compile_error = true
+        verdict = "Compile Error"
       end
       execution_cmd = "#{test_dir}/a"
     when "Ruby"
@@ -46,19 +50,21 @@ class Execution
     end
     
     # Run test
-    verdict = 'Accepted'
-    test_files.each do |test|
-      return error('System error 5') if !system("sudo chown -R #{user_name}:#{user_name} #{test_dir}")
-      res = !system("sudo -u #{user_name} sh -c \"timeout #{time_limit} #{execution_cmd} < #{input_dir}/#{test} > #{test_dir}/#{output_file}\"")
-      return error('System error 6') if !system("sudo chown -R #{daemon}:#{daemon} #{test_dir}")
-      if res
-        verdict = 'Runtime Error'
-        break
-      end
-      res = !system("diff -q #{test_dir}/#{output_file} #{output_dir}/#{test} > /dev/null")
-      if res
-        verdict = 'Wrong Answer'
-        break
+    if !compile_error
+      verdict = 'Accepted'
+      test_files.each do |test|
+        return error('System error 5') if !system("sudo chown -R #{user_name}:#{user_name} #{test_dir}")
+        res = !system("sudo -u #{user_name} sh -c \"timeout #{time_limit} #{execution_cmd} < #{input_dir}/#{test} > #{test_dir}/#{output_file} 2> /dev/null\"")
+        return error('System error 6') if !system("sudo chown -R #{daemon}:#{daemon} #{test_dir}")
+        if res
+          verdict = 'Runtime Error'
+          break
+        end
+        res = !system("diff -q #{test_dir}/#{output_file} #{output_dir}/#{test} >& /dev/null")
+        if res
+          verdict = 'Wrong Answer'
+          break
+        end
       end
     end
     
