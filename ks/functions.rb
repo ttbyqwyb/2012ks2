@@ -29,8 +29,7 @@ end
 
 def get_input_files( prob_num )
   input_dir = Settings.input_dir( prob_num )
-  input_files = []
-  Find.find( input_dir ){|file_name| input_files << file_name }
-  input_files.shift
+  input_files = [input_dir]
+  Dir.glob( input_dir + "*" ){|file_name| input_files << file_name }
   return input_files
 end
