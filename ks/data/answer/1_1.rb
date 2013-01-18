@@ -5,4 +5,4 @@ while line = STDIN.gets
     sum += n.to_i
   end
 end
-print "fff"
+print sum.to_s
