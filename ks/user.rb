@@ -28,19 +28,20 @@ class User
     pg.exec(sql)
   end
   def save_score( args )
+    pg = Settings.get_pgconn
     userid = @userid
     prob_num = args["prob_num"].to_i
     date = Time.now.strftime("%x %X")
-    verdict = args["verdict"].to_s
+    verdict = pg.escape_string(args["verdict"].to_s)
     execution_time = args["execution_time"].to_s
     language = args["language"]
-    source_code = args["source_code"]
+    source_code = pg.escape_string(args["source_code"])
     sql = <<SQL
 insert into #{DB::Scores}
 (#{DB::Scores_userid}, #{DB::Scores_prob_num}, #{DB::Scores_date}, #{DB::Scores_verdict}, #{DB::Scores_execution_time}, #{DB::Scores_language}, #{DB::Scores_source_code})
 values ( '#{userid}', '#{prob_num}', '#{date}', '#{verdict}', '#{execution_time}','#{language}', '#{source_code}');
 SQL
-    Settings.get_pgconn.exec( sql )
+    pg.exec( sql )
   end
   def load_score( prob_num = nil )
     if prob_num.nil?
@@ -90,13 +91,16 @@ SQL
     end
     filename = @userid.to_s + "_" + prob_num.to_s + ext
     save_file( answer_dir + filename, source_code )
+    sql = "select last_value from #{DB::Scores}_#{DB::Scores_scoreid}_seq;"
+    answer_num = Settings.get_pgconn.exec(sql)[0]["last_value"].to_i + 1
     result = Execution.new({
                              "input_dir" => input_dir,
                              "output_dir" => output_dir,
                              "test_files" => test_files,
                              "source_file" => answer_dir + filename,
                              "language" => language,
-                             "time_limit" => time_limit
+                             "time_limit" => time_limit,
+                             "answer_num" => answer_num
                            }).run()
     verdict = result["verdict"]
     execution_time = result["execution_time"]
@@ -105,9 +109,6 @@ SQL
                       "execution_time" => execution_time,
                       "language" => language,
                       "source_code" => source_code})
-#    self.load_score
-#    self.score.add_score({ "prob_num" => prob_num.to_s, "verdict" => result["verdict"] })
-#    self.save_score
     return result
   end
   def prob_list

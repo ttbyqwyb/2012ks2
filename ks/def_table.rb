@@ -18,7 +18,7 @@ end
 
 def create_table_scores
   pg = Settings.get_pgconn
-  sql = <<SQL
+  sql1 = <<SQL
 drop table if exists #{DB::Scores};
 create table #{DB::Scores} (
   #{DB::Scores_scoreid} serial not null unique,
@@ -31,7 +31,13 @@ create table #{DB::Scores} (
   #{DB::Scores_source_code} text
 );
 SQL
-  pg.exec(sql)
+  sql2 = <<SQL
+insert into #{DB::Scores}
+(#{DB::Scores_userid},#{DB::Scores_prob_num},#{DB::Scores_verdict})
+values (0, 0, 'dammy');
+SQL
+  pg.exec(sql1)
+  pg.exec(sql2) # select last_value from scores_scoreid_seq
 end
 
 def create_table_messages
