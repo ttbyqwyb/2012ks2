@@ -11,9 +11,10 @@ session = UserSession.new(cgi)
 if session.login_check
   user = session.get_user
   prob_num = cgi["prob_num"].to_i
-  sourcecode = cgi["sourcecode"]
+  source_code = cgi["source_code"]
   language = cgi["language"]
-  result = user.answer( {"prob_num"=>prob_num, "sourcecode"=>sourcecode, "language"=>language} )
+  result = user.answer( {"prob_num"=>prob_num, "source_code"=>source_code, "language"=>language} )
+  score = session.get_user.load_score
   html = <<HTML
 <html>
   <body>

@@ -1,0 +1,17 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'cgi'
+require 'cgi/session'
+require 'user'
+
+class UserSession < CGI::Session
+  def initialize(*args)
+    super(*args)
+    logined = false
+    error_msg = ""
+  end
+  def login( name, pass )
+    begin
+      
+  

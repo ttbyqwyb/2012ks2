@@ -1,0 +1,13 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'cgi'
+require 'cgi/session'
+require './session.rb'
+
+cgi = CGI.new
+session = UserSession.new(cgi)
+if session.logined?
+  print cgi.header({'status' => 'REDIRECT', 'Location' => './home.cgi'})
+else
+  

@@ -1,0 +1,14 @@
+#!/usr/bin/ruby
+
+require "settings"
+
+def make_prob( args )
+  prob_num = args["prob_num"].to_i
+  title = args["title"]
+  text = args["text"]
+  inputs = args["inputs"]
+  outputs = args["outputs"]
+  time_limit = args["time_limit"]
+  Dir.mkdir( Settings.prob_dir(prob_num) )
+  Dir.mkdir( Settings.input_dir(prob_num) )
+  Dir.mkdir( Settings.output_dir(prob_num) )

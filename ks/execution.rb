@@ -1,4 +1,5 @@
 #!/usr/bin/ruby
+require 'settings'
 
 class Execution
   def initialize(args)
@@ -21,7 +22,7 @@ class Execution
     language = @args['language']
     
     # TODO
-    daemon = 'daemon'
+    daemon = Settings::Daemon
     user_name = 'user_name'
     test_dir = 'for_daemon/test_dir'
     output_file = 'output'

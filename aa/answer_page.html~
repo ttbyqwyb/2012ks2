@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>answer_page</title>
+  </head>
+  <body>
+    <p>
+      <form method="post" action="answer.cgi">
+	<input type="number" name="probnum"><br>
+	<input type="text" name="sourcecode"><br>
+	<input type="submit" value="submit">
+      </form>
+    </p>
+  </body>
+</html>
+      

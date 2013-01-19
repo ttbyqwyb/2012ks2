@@ -37,7 +37,7 @@ if session.login_check
 	    <option value="Ruby">Ruby</option>
 	  </select><br><br>
 	  SourceCode<br>
-	  <textarea name="sourcecode" cols="50" rows="10"></textarea><br>
+	  <textarea name="source_code" cols="50" rows="10"></textarea><br>
 	  <input type="submit" value="submit">
 	</form>
       </div>

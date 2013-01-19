@@ -16,23 +16,57 @@ class User
     @username = username
     @password = password
   end
-  def load_score
+  def _load_score
     pg = Settings.get_pgconn
-    user_search = pg.exec("select * from users where userid = #{@userid}")
+    sql = "select * from #{DB::Users} where #{DB::Users_userid} = #{@userid}"
+    user_search = pg.exec(sql)
     u = user_search[0]
     @score = Score.new(u['score'])
   end
-  def save_score
+  def _save_score
     pg = Settings.get_pgconn
     str = pg.escape(self.score.score_to_str)
-    pg.exec("update users set score = '#{str}' where userid = #{@userid};")
+    sql = "update #{DB::Users} set #{DB::Users_score} = '#{str}' where #{DB::Users_userid} = #{@userid};"
+    pg.exec(sql)
   end
+  def save_score( args )
+    userid = @userid
+    prob_num = args["prob_num"].to_i
+    date = Time.now.strftime("%x %X")
+    verdict = args["verdict"].to_s
+    execution_time = args["execution_time"].to_s
+    language = args["language"]
+    source_code = args["source_code"]
+    sql = <<SQL
+insert into #{DB::Scores}
+(#{DB::Scores_userid}, #{DB::Scores_prob_num}, #{DB::Scores_date}, #{DB::Scores_verdict}, #{DB::Scores_execution_time}, #{DB::Scores_language}, #{DB::Scores_source_code})
+values ( '#{userid}', '#{prob_num}', '#{date}', '#{verdict}', '#{execution_time}','#{language}', '#{source_code}');
+SQL
+    Settings.get_pgconn.exec( sql )
+  end
+  def load_score( prob_num = nil )
+    if prob_num.nil?
+      sql_prob_num = ""
+    else
+      sql_prob_num = "and #{DB::Scores_prob_num} = #{prob_num.to_s}"
+    end
+    sql = "select * from #{DB::Scores} where #{DB::Scores_userid} = #{@userid}" + sql_prob_num + ";"
+    res = Settings.get_pgconn.exec( sql )
+    ary = []
+    res.each do |col|
+      ary << col
+    end
+    return ary
+  end
+    
   def change_password( old, new )
     if @password != old
       return "Wrong password."
     else
       pg = Settings.get_pgconn
-      pg.exec("update users set password = '#{new}' where userid = #{@userid};")
+      sql = "update #{DB::Users} set #{DB::Users_password} = '#{new}' where #{DB::Users_userid} = #{@userid};"
+SQL
+      pg.exec(sql)
       return "Your password has been changed."
     end
   end
@@ -44,9 +78,9 @@ class User
     input_dir = Settings.input_dir( prob_num )
     output_dir = Settings.output_dir( prob_num )
     test_files = get_input_files( prob_num )
-    text = args["sourcecode"]
-    if File.exist?( prob_dir + "time_limit" )
-      time_limit = read_file( prob_dir + "time_limit" ).to_s
+    source_code = args["source_code"]
+    if File.exist?( Settings.prob_time_limit(prob_num) )
+      time_limit = read_file( Settings.prob_time_limit(prob_num) ).to_s
     else
       time_limit = "1.5"
     end
@@ -57,7 +91,7 @@ class User
       ext = ".rb"
     end
     filename = @userid.to_s + "_" + prob_num.to_s + ext
-    save_file( answer_dir + filename, text )
+    save_file( answer_dir + filename, source_code )
     result = Execution.new({
                              "input_dir" => input_dir,
                              "output_dir" => output_dir,
@@ -66,31 +100,37 @@ class User
                              "language" => language,
                              "time_limit" => time_limit
                            }).run()
-    self.load_score
-    self.score.add_score({ "prob_num" => prob_num.to_s, "verdict" => result["verdict"] })
-    self.save_score
+    verdict = result["verdict"]
+    execution_time = result["execution_time"]
+    self.save_score({"prob_num" => prob_num,
+                      "verdict" => verdict,
+                      "execution_time" => execution_time,
+                      "language" => language,
+                      "source_code" => source_code})
+#    self.load_score
+#    self.score.add_score({ "prob_num" => prob_num.to_s, "verdict" => result["verdict"] })
+#    self.save_score
     return result
   end
   def prob_list
     list = []
     prob_num = 1
     while File.exist?(Settings.prob_dir(prob_num))
+      prob_title = get_prob_title( prob_num )
       prob_page = <<HTML
 <form method="post" action="prob_page.cgi">
   <input type="hidden" name="prob_num" value="#{prob_num}">
   <input type="submit" value="go">
 </form>
 HTML
-      score_of_this_prob = self.score.get( "prob_num", prob_num.to_s )[0]
-      if !score_of_this_prob.nil?
-        verdict = score_of_this_prob["verdict"].to_s
-      else
-        verdict = ""
-      end
+      score_list = self.load_score(prob_num)
+      key = [DB::Scores_date,DB::Scores_verdict,DB::Scores_execution_time,DB::Scores_language,DB::Scores_source_code]
+      score = ary_to_table( hashary_to_ary( key, score_list ))
       hash = { "prob_num" => prob_num,
+        "prob_title" => prob_title,
         "prob_page" => prob_page,
         "text" => read_file(Settings.prob_dir(prob_num)+"text"),
-        "verdict" => verdict
+        "score" => score
       }
       list << hash
       prob_num += 1
@@ -101,7 +141,8 @@ end
 
 def User.load(userid)
   pg = Settings.get_pgconn
-  user_search = pg.exec("select * from users where userid = '#{userid}'")
+  sql = "select * from #{DB::Users} where #{DB::Users_userid} = '#{userid}'"
+  user_search = pg.exec(sql)
   if user_search.nil?
     print "Non-existing id."
   else
@@ -113,7 +154,8 @@ end
 def User.add(username, password)
   pg = Settings.get_pgconn
   begin
-    pg.exec("insert into users (username, password) values ('#{username}', '#{password}');")
+    sql = "insert into #{DB::Users} (#{DB::Users_username}, #{DB::Users_password}) values ('#{username}', '#{password}');"
+    pg.exec(sql)
     return true
   rescue PG::Error => ex
     return ex

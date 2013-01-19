@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>answer_page</title>
+  </head>
+  <body>
+    <p>
+      <form method="post" action="answer.cgi">
+	ProblemNumber<br>
+	<input type="number" name="probnum" size="4"><br><br>
+	Language<br>
+	<select name="language">
+	  <option value="cpp">cpp</option>
+	  <option value="ruby">ruby</option>
+	</select><br><br>
+	SourceCode<br>
+	<textarea name="sourcecode" cols="50" rows="10"></textarea><br>
+	<input type="submit" value="submit">
+      </form>
+    </p>
+    <p>
+      <a href="./home.cgi">Back to home.</a>
+    </p>
+  </body>
+</html>
+      

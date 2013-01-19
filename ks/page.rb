@@ -55,9 +55,9 @@ class HomePage
   end
   def page()
     user = @args['user']
-    user.load_score
+#    user.load_score
 #    key = user.score.key
-    key = ["prob_num","prob_page","verdict"]
+    key = ["prob_num", "prob_title", "prob_page", "score"]
     prob_list = user.prob_list
     prob_table = ary_to_table( hashary_to_ary( key ,prob_list ))
     ret = ""
@@ -73,7 +73,6 @@ class HomePage
     #{prob_table}
   </p>
   <p>
-    <a href="./answer_page.html">answer</a>
     <a href="change_password.html">Change password</a>
     <a href="logout.cgi">LogOut</a>
   </p>

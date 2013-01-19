@@ -17,13 +17,30 @@ class LoginPage
   <title>Login</title>
 </head>
 <body>
-  <form method="post" action="login.cgi">
-    username
-    <input type="text" name="username"/><br>
-    password
-    <input type="password" name="password"/>
-    <input type="submit" value="Login"/>
-  </form>
+  <p>
+    <b>Login</b>
+    <div style="border-style:solid;border-width:1px;padding:10px">
+      <form method="post" action="login.cgi">
+	username
+	<input type="text" name="username"/><br>
+	password
+	<input type="password" name="password"/><br>
+	<input type="submit" value="Login"/><br>
+      </form>
+    </div>
+  </p>
+  <p>
+    <b>Create new account</b>
+    <div style="border-style:solid;border-width:1px;padding:10px">
+      <form method="post" action="user_add.cgi">
+	username
+	<input type="text" name="username"><br>
+	password
+	<input type="password" name="password"><br>
+	<input type="submit" value="add"><br>
+      </form>
+    </div>
+  </p>
   <p>#{error_msg}</p>
 </body>
 </html>
@@ -39,10 +56,10 @@ class HomePage
   def page()
     user = @args['user']
     user.load_score
-    key = user.score.key
-    score = user.score.score
-    ary = hashary_to_ary( key, score )
-    table = ary_to_table( ary )
+#    key = user.score.key
+    key = ["prob_num","prob_page","verdict"]
+    prob_list = user.prob_list
+    prob_table = ary_to_table( hashary_to_ary( key ,prob_list ))
     ret = ""
     ret += <<HTML
 <html>
@@ -52,17 +69,11 @@ class HomePage
 <body>
   <p>id: <b>#{user.userid}</b>, name: <font size="5"><b>#{user.username}</b></font></p>
   <p>
-  <form method="post" action="upload.cgi" enctype="multipart/form-data">
-    <input type="file" name="file"/>
-    <input type="submit" value="submit file"/>
-  </form>
+    prob list<br>
+    #{prob_table}
   </p>
   <p>
-    score list<br>
-    #{table}
-  </p>
-  <p>
-    <a href="./table.html">table</a>
+    <a href="./answer_page.html">answer</a>
     <a href="change_password.html">Change password</a>
     <a href="logout.cgi">LogOut</a>
   </p>

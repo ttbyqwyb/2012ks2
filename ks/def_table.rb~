@@ -1,0 +1,38 @@
+require "rubygems"
+require "pg"
+require "settings"
+
+
+
+def create_table
+  pg = Settings.get_pgconn
+  sql = <<SQL
+drop table if exists #{DB::Users};
+create table #{DB::Users} (
+  #{DB::Users_userid} serial not null unique,
+  #{DB::Users_username} varchar(16) not null unique,
+  #{DB::Users_password} text not null,
+  #{DB::Users_score} text
+);
+
+drop table if exists #{DB::Messages};
+create table #{DB::Messages} (
+  #{DB::Messages_msgid} serial not null unique,
+  #{DB::Messages_title} varchar(20),
+  #{DB::Messages_msg} text
+);
+SQL
+  pg.exec(sql)
+end
+
+def insert_users
+  pg = Settings.get_pgconn
+  sql = <<SQL
+insert into #{DB::Users} (#{DB::Users_username}, #{DB::Users_password})
+  values ('name', 'pass')
+         ('waka', 'password')
+         ('wakatsuki', 'foo')
+         ('a', 'b');
+SQL
+  pg.exec(sql)
+end
