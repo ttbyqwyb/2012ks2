@@ -6,7 +6,7 @@ require 'pg'
 module DB
   DB_name = "test"
   DB_user = "postgres"
-  DB_password = "" # "topology"
+  DB_password = "" 
   
   Users = "users"
   Users_userid = "userid"
