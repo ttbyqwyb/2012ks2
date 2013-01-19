@@ -5,7 +5,6 @@ require 'cgi'
 require 'cgi/session'
 require 'pg'
 require 'settings'
-require 'score'
 require 'execution'
 require 'functions'
 
@@ -21,7 +20,6 @@ class User
     sql = "select * from #{DB::Users} where #{DB::Users_userid} = #{@userid}"
     user_search = pg.exec(sql)
     u = user_search[0]
-    @score = Score.new(u['score'])
   end
   def _save_score
     pg = Settings.get_pgconn

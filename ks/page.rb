@@ -102,29 +102,3 @@ HTML
   end
 end
 
-class ResultOfUpload
-  def initialize(args)
-    @args = args
-  end
-  def page()
-    filename = @args['filename']
-    text = @args['text']
-    ret = <<HTML
-<html>
-  <head>
-    <title>ResultOfUpload</title>
-  </head>
-  <body>
-    <p>
-      The file #{filename} was successfully uploaded!!!<br>
-    </p>
-    <p><a href="./home.cgi">Back to home.</a></p>
-    <p>
-      #{text}
-    </p>
-  </body>
-</html>
-HTML
-    return ret
-  end
-end

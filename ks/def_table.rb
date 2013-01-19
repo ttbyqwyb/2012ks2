@@ -10,8 +10,7 @@ drop table if exists #{DB::Users};
 create table #{DB::Users} (
   #{DB::Users_userid} serial not null unique,
   #{DB::Users_username} varchar(16) not null unique,
-  #{DB::Users_password} text not null,
-  #{DB::Users_score} text
+  #{DB::Users_password} text not null
 );
 SQL
   pg.exec(sql)

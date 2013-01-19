@@ -12,8 +12,7 @@ module DB
   Users_userid = "userid"
   Users_username = "username"
   Users_password = "password"
-  Users_score = "score"
-  Users_columns = [Users_userid,Users_username,Users_password,Users_score]
+  Users_columns = [Users_userid,Users_username,Users_password]
 
   Scores = "scores"
   Scores_scoreid = "scoreid"
