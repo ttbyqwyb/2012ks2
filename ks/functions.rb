@@ -53,6 +53,7 @@ def save_msg( args )
   end
   time = Time.now.strftime("%x %X")
   pg = Settings.get_pgconn
+  msg = pg.escape_string(msg)
   sql = <<SQL
 insert into #{DB::Messages}
 (#{DB::Messages_time}, #{DB::Messages_title}, #{DB::Messages_msg})

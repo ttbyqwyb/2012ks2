@@ -64,8 +64,8 @@ SQL
     else
       pg = Settings.get_pgconn
       sql = "update #{DB::Users} set #{DB::Users_password} = '#{new}' where #{DB::Users_userid} = #{@userid};"
-SQL
       pg.exec(sql)
+      save_msg("message\nj;;;ji")
       return "Your password has been changed."
     end
   end
