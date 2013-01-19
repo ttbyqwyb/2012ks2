@@ -6,7 +6,7 @@ require 'pg'
 module DB
   DB_name = "test"
   DB_user = "postgres"
-  DB_password = "topology" 
+  DB_password = "" 
   
   Users = "users"
   Users_userid = "userid"
@@ -57,10 +57,10 @@ module Settings
   end
   
   # session.rb cmd_tuples
-  False_in_my_PC = false # false
+  False_in_my_PC = true # false
 
   # in execution.rb
-  Daemon = "www-data" # "wwww-data"
+  Daemon = "daemon" # "wwww-data"
 
   def get_pgconn()
     pg = PG::Connection.connect('localhost', 5432, '', '', DB::DB_name, DB::DB_user, DB::DB_password )
