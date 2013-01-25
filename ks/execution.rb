@@ -90,7 +90,7 @@ class Execution
     return error('System error [userdel]') if !system("sudo userdel #{user_name}")
     
     if accepted
-      return { 'verdict' => verdict + " " + max_execution_time.to_s, 'execution_time' => max_execution_time }
+      return { 'verdict' => verdict, 'execution_time' => max_execution_time }
     else
       return { 'verdict' => verdict }
     end
