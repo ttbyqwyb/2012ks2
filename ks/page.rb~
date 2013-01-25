@@ -67,7 +67,7 @@ class HomePage
   <title>Home</title>
 </head>
 <body>
-  <p><a href="./ks2.pdf">Slides</a></p>
+  <p><a href="./ks2.pdf"><font size=10>Slides</font></a></p>
   <p>id: <b>#{user.userid}</b>, name: <font size="5"><b>#{user.username}</b></font></p>
   <p>
     prob list<br>
