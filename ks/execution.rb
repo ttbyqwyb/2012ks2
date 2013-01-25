@@ -18,13 +18,14 @@ class Execution
     test_files = @args['test_files']
     
     # Arguments for the submission
+    submission_id = @args['answer_num']
     source_file = @args['source_file']
     language = @args['language']
     
     # TODO
     daemon = Settings::Daemon
-    user_name = 'user_name'
-    test_dir = 'for_daemon/test_dir'
+    user_name = 'user_submission_#{submission_id}'
+    test_dir = 'for_daemon/test_dir_#{submission_id}'
     output_file = 'output'
     run_file = 'run'
     time_file = 'time'
