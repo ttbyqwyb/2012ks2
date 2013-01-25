@@ -78,7 +78,7 @@ save_msg("submission_id = #{submission_id}")
           verdict = 'Runtime Error'
           break
         end
-        res = !system("diff -b -q #{test_dir}/#{output_file} #{output_dir}#{test} > /dev/null 2>&1")
+        res = !system("diff -q #{test_dir}/#{output_file} #{output_dir}#{test} > /dev/null 2>&1")
         if res
           accepted = false
           verdict = 'Wrong Answer'
