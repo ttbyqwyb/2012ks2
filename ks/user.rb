@@ -21,14 +21,10 @@ class User
     user_search = pg.exec(sql)
     u = user_search[0]
   end
-  def _save_score
-    pg = Settings.get_pgconn
-    str = pg.escape(self.score.score_to_str)
-    sql = "update #{DB::Users} set #{DB::Users_score} = '#{str}' where #{DB::Users_userid} = #{@userid};"
-    pg.exec(sql)
-  end
   def save_score( args )
     pg = Settings.get_pgconn
+    answer_num = args["answer_num"]
+    answer_num = get_scoreid if answer_num.nil?
     userid = @userid
     prob_num = args["prob_num"].to_i
     date = Time.now.strftime("%x %X")
@@ -37,9 +33,11 @@ class User
     language = args["language"]
     source_code = pg.escape_string(args["source_code"])
     sql = <<SQL
-insert into #{DB::Scores}
-(#{DB::Scores_userid}, #{DB::Scores_prob_num}, #{DB::Scores_date}, #{DB::Scores_verdict}, #{DB::Scores_execution_time}, #{DB::Scores_language}, #{DB::Scores_source_code})
-values ( '#{userid}', '#{prob_num}', '#{date}', '#{verdict}', '#{execution_time}','#{language}', '#{source_code}');
+update #{DB::Scores}
+set (#{DB::Scores_userid}, #{DB::Scores_prob_num}, #{DB::Scores_date}, #{DB::Scores_verdict}, #{DB::Scores_execution_time}, #{DB::Scores_language}, #{DB::Scores_source_code})
+= ( '#{userid}', '#{prob_num}', '#{date}', '#{verdict}', '#{execution_time}','#{language}', '#{source_code}')
+where #{DB::Scores_scoreid} = #{answer_num}
+;
 SQL
     pg.exec( sql )
   end
@@ -89,10 +87,9 @@ SQL
     elsif language == "Ruby"
       ext = ".rb"
     end
-    filename = @userid.to_s + "_" + prob_num.to_s + ext
+    answer_num = get_scoreid
+    filename = answer_num.to_s + ext # @userid.to_s + "_" + prob_num.to_s + ext
     save_file( answer_dir + filename, source_code )
-    sql = "select last_value from #{DB::Scores}_#{DB::Scores_scoreid}_seq;"
-    answer_num = Settings.get_pgconn.exec(sql)[0]["last_value"].to_i + 1
     result = Execution.new({
                              "input_dir" => input_dir,
                              "output_dir" => output_dir,
@@ -104,7 +101,8 @@ SQL
                            }).run()
     verdict = result["verdict"]
     execution_time = result["execution_time"]
-    self.save_score({"prob_num" => prob_num,
+    self.save_score({"answer_num" => answer_num,
+                      "prob_num" => prob_num,
                       "verdict" => verdict,
                       "execution_time" => execution_time,
                       "language" => language,

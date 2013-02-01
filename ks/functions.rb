@@ -76,3 +76,16 @@ def delete_msg
   pg = Settings.get_pgconn
   pg.exec("truncate table #{DB::Messages};")
 end
+
+def get_scoreid
+  pg = Settings.get_pgconn
+  sql = <<SQL
+insert into #{DB::Scores}
+(#{DB::Scores_verdict})
+values ('');
+SQL
+  pg.exec( sql )
+  sql = "select last_value from #{DB::Scores}_#{DB::Scores_scoreid}_seq;"
+  answer_num = pg.exec(sql)[0]["last_value"].to_i
+  return answer_num
+end

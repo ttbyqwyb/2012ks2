@@ -22,8 +22,8 @@ def create_table_scores
 drop table if exists #{DB::Scores};
 create table #{DB::Scores} (
   #{DB::Scores_scoreid} serial not null unique,
-  #{DB::Scores_userid} integer not null,
-  #{DB::Scores_prob_num} integer not null,
+  #{DB::Scores_userid} integer,
+  #{DB::Scores_prob_num} integer,
   #{DB::Scores_date} varchar(30),
   #{DB::Scores_verdict} varchar(30),
   #{DB::Scores_execution_time} varchar(30),
@@ -37,7 +37,7 @@ insert into #{DB::Scores}
 values (0, 0, 'dammy');
 SQL
   pg.exec(sql1)
-  pg.exec(sql2) # select last_value from scores_scoreid_seq
+#  pg.exec(sql2) # select last_value from scores_scoreid_seq
 end
 
 def create_table_messages
